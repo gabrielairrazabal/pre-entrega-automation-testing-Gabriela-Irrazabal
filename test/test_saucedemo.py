@@ -45,19 +45,32 @@ def test_catalogo(driver):
     #Validar que elementos importantes de la interfaz estén presentes (menú, filtros, etc.)
 
 
-def test_carrito(driver):
+def test_carrito(driver): 
     # logeo de usuario con username y password
-    # click al botón de login
-    login_saucedemo( driver )
-    #llevarme a la pagina del carrito de compras
-    products = driver.find_elements(By.CLASS_NAME,'inventory_item')
+    login_saucedemo(driver)
+
+    # llevarme a la pagina del inventario
+    products = driver.find_elements(By.CLASS_NAME, 'inventory_item')
     total_products = len(products)
 
-    #Añadir un producto al carrito haciendo clic en el botón correspondiente
-    products[0].find_elements(By.TAG_NAME,'button').click()
-    
-    #Verificar que el contador del carrito se incremente correctamente
-    badge = driver.find_elements(By.CLASS_NAME, 'shopping_cart_badge').text
-    assert badge == "1"
+    # Añadir un producto al carrito haciendo clic en el botón correspondiente
+    products[0].find_element(By.TAG_NAME, 'button').click()
 
-    #Comprobar que el producto añadido aparezca correctamente en el carrito
+    #Guardar nombre del producto seleccionado
+    
+    product_name = products[0].find_element(By.CLASS_NAME, 'inventory_item_name').text
+
+    # Verificar que el contador del carrito se incremente correctamente
+    badge_element = driver.find_element(By.CLASS_NAME, 'shopping_cart_badge')
+    badge_text = badge_element.text
+    assert badge_text == "1"
+
+    driver.save_screenshot('Contadordecarrito.png')
+
+    # Comprobar que el producto añadido sea el del detalle del carrito
+    badge_element.click()  
+
+    cart_item_name = driver.find_element(By.CLASS_NAME, 'inventory_item_name').text
+    assert product_name == cart_item_name
+
+    driver.save_screenshot('DetalleCarrito.png')
